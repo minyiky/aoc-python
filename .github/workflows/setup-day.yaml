@@ -37,17 +37,13 @@ jobs:
     - name: Check for changes
       id: git_status
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         if [ -n "$(git status --porcelain)" ]; then
-          echo "changes=true" >> $GITHUB_ENV
+          echo "changes=true" >> $GITHUB_OUTPUT
         else
-          echo "changes=false" >> $GITHUB_ENV
+          echo "changes=false" >> $GITHUB_OUTPUT
         fi
 
-    - name: Commit and push changes (only if there are changes)
-      if: env.changes == 'true'
-      run: |
-        git add .
-        git commit -m "Daily update: Advent of Code (generated on $(date -u +"%Y-%m-%d"))"
-        git push origin main
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      if: steps.git_status.outputs.changes == 'true'
+      with:
+        commit_message: Generated files for the new day

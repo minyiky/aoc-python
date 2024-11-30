@@ -1,0 +1,5 @@
+# Local tools for automating the Advent of Code setup process
+-e ./aoc_tools
+
+# Tool for automating the collection of Advent of Code data
+advent-of-code-data

@@ -26,6 +26,8 @@ def create_day_files(year: int, day: int):
         f.write(
             f'''"""Solution for Day {day} - {title}"""
 
+import os
+
 def part_one(input_data: str) -> int:
     """Implement part one logic"""
     pass
@@ -35,7 +37,9 @@ def part_two(input_data: str) -> int:
     pass
 
 if __name__ == "__main__":
-    with open("{day_folder}/input.txt") as f:
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+
+    with open(f"'''+"{dir_path}"+'''/input.txt", "r") as f:
         input_data = f.read()
     print("Solution for Day {day} - {title}")
     print(part_one(input_data))  # Run part one

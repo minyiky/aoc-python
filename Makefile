@@ -5,7 +5,7 @@ YEAR := $(shell date +%Y)
 # Create the directory path with a zero padded day
 WORKING_DIR = $(YEAR)/day$(shell printf "%02d" $(DAY))
 
-.PHONY: fetch_input fetch_example fetch
+.PHONY: fetch-input fetch-example fetch
 
 # Fetch input for the specified day and year
 fetch-input:
@@ -19,7 +19,13 @@ fetch-example:
 	@aocd $(DAY) $(YEAR) --example > "$(WORKING_DIR)/example.txt"
 	@echo "Example fetched for Year $(YEAR), Day $(DAY)"
 
-fetch: fetch_input fetch_example
+fetch: fetch-input fetch-example
 
 generate:
-	python3 -m aoc_tools.generate.generate_files $(YEAR) $(DAY)
+	@python3 -m aoc_tools.generate.generate_files $(YEAR) $(DAY)
+
+test:
+	@python3 -m unittest
+
+test-today:
+	@python3 -m unittest -v $(WORKING_DIR)

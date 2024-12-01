@@ -8,13 +8,13 @@ WORKING_DIR = $(YEAR)/day$(shell printf "%02d" $(DAY))
 .PHONY: fetch_input fetch_example fetch
 
 # Fetch input for the specified day and year
-fetch_input:
+fetch-input:
 	@mkdir -p $(WORKING_DIR)
 	@aocd $(DAY) $(YEAR) > "$(WORKING_DIR)/input.txt"
 	@echo "Input fetched for Year $(YEAR), Day $(DAY)"
 
 # Fetch example for the specified day and year
-fetch_example:
+fetch-example:
 	@mkdir -p $(WORKING_DIR)
 	@aocd $(DAY) $(YEAR) --example > "$(WORKING_DIR)/example.txt"
 	@echo "Example fetched for Year $(YEAR), Day $(DAY)"

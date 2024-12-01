@@ -38,3 +38,5 @@ test:
 test-day:
 	@python3 -m unittest discover $(YEAR) "day$(shell printf "%02d" $(DAY))_test.py"
 
+update-readme:
+	@python3 -m aoc_tools.generate.update_readme $(YEAR)

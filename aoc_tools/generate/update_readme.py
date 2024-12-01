@@ -47,7 +47,7 @@ def get_day_title(year: int, day: int):
 
 
 # A function to generate the day rows for the README
-def generate_day_rows(year: int, stats):
+def generate_day_rows(year: int, stats, days_info: list[str]):
     """
     Generates a list of rows for the README table containing the days.
 
@@ -55,6 +55,7 @@ def generate_day_rows(year: int, stats):
         year (int): The year for which to generate the table.
         stats (dict): A dictionary containing the stats for the year, as returned
             by `aocd.User.get_stats`.
+        days_info (list[str]): A list of strings already populated day information.
 
     Returns:
         list[str]: A list of strings, each representing a row in the table.
@@ -69,9 +70,16 @@ def generate_day_rows(year: int, stats):
             # Get the stars for the day from AoC
             stars = get_stars_for_day(stats, year, day)
 
+            notes = ""
+            try:
+                day_info = days_info[day]
+                notes = day_info.split("|")[-2].strip()
+            except IndexError:
+                pass
+
             # Build the row for the table
             day_rows.append(
-                f"| Day {day}: {day_title} |  {stars}  | [python]({_format_day(day)}/) |  |"
+                f"| Day {day}: {day_title} |  {stars}  | [python]({_format_day(day)}/) | {notes} |"
             )
         except FileNotFoundError:
             break
@@ -102,18 +110,22 @@ def update_readme(year: int):
     # Find the header and the table section
     table_start_idx = None
     table_end_idx = None
+    days_info = []
     for i, line in enumerate(readme_content):
         if line.startswith("| *Day*"):
             table_start_idx = i
 
-        if table_start_idx is not None and (not line.startswith("|")):
-            table_end_idx = i
-            break
+        if table_start_idx is not None:
+            if not line.startswith("|"):
+                table_end_idx = i
+                break
+            print("adding day info")
+            days_info.append(line.strip())
 
     # If the table was found, replace only the rows
     if table_start_idx is not None and table_end_idx is not None:
         # Get the updated table rows
-        day_rows = generate_day_rows(year, stats)
+        day_rows = generate_day_rows(year, stats, days_info)
 
         # Replace the old table rows with the new ones
         new_readme_content = readme_content[

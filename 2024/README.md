@@ -9,7 +9,7 @@ Here are my results for the [2024 advent of code](https://adventofcode.com/2024)
 
 
 | *Day* | *Stars* |  *Solution*  |                         *Notes*                         |
-| Day 1: Historian Hysteria |  ⭐⭐  | [python](day01/) |  |
+| Day 1: Historian Hysteria |  ⭐⭐  | [python](day01/) | A relatively strait forward day of splitting an input into ints and comparing lists |
 
 
 ## Running the code
@@ -22,18 +22,14 @@ To run the go code, you must be in this directory before running any of the foll
 make fetch-input
 ```
 
-The current day can be executed by running:
-``` bash
+To run all solutions for the current year you can use:
+```bash
 make run
 ```
-or any specific day can run using
-```bash
-make run DAY=<DD>
-```
 
-To run all days you can instead run:
-```bash
-make run-all
+The run a single day (defaulting to today) use:
+``` bash
+make run-day
 ```
 
 To run the tests use:

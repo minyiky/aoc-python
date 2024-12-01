@@ -1,9 +1,11 @@
 """Tests for Day Day 1 - Historian Hysteria"""
-import unittest
+
 import os
+import unittest
+
+from aoc_tools.parser import get_example_data, parse_examples
 
 from .solution import part_one, part_two
-from aoc_tools.parser import get_example_data, parse_examples
 
 
 class TestDay1(unittest.TestCase):

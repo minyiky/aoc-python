@@ -24,8 +24,17 @@ fetch: fetch-input fetch-example
 generate:
 	@python3 -m aoc_tools.generate.generate_files $(YEAR) $(DAY)
 
-test:
-	@python3 -m unittest
+run:
+	@for dir in "$(YEAR)/*/"; do \
+		python $$dir/solution.py; \
+	done
 
-test-today:
-	@python3 -m unittest -v $(WORKING_DIR)
+run-day:
+	@python $(WORKING_DIR)/solution.py
+
+test:
+	@python3 -m unittest discover $(YEAR) "*test.py"
+
+test-day:
+	@python3 -m unittest discover $(YEAR) "day$(shell printf "%02d" $(DAY))_test.py"
+

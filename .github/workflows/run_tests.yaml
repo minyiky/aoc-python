@@ -29,7 +29,7 @@ jobs:
 
     - name: Run tests and generate badge info
       run: |
-        output=$(make test YEAR=2024 2>&1 | tee /dev/tty)
+        output=$(make test YEAR=2024 2>&1 | tee /dev/stdout)
 
         tests=$(echo "$output" | grep -oP '(?<=Ran )[0-9]+(?= tests in)')
         passes=$(echo "$output" | head -n 1 | grep -o '\.' | wc -l)

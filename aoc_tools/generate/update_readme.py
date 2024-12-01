@@ -112,7 +112,7 @@ def update_readme(year: int):
     table_end_idx = None
     days_info = []
     for i, line in enumerate(readme_content):
-        if line.startswith("| *Day*"):
+        if line.startswith("|---"):
             table_start_idx = i
 
         if table_start_idx is not None:

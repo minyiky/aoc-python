@@ -2,7 +2,7 @@
 
 This repository contains my solutions for the Advent of Code challenges, written in Python. Each year’s solutions will be organized in their respective folders.
 
-FOr python I have taken part in:
+For python I have taken part in:
  - [2024](./2024)
 
 For other languages that I have written solution for advent of code in see here:

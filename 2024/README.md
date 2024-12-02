@@ -11,6 +11,7 @@ Here are my results for the [2024 advent of code](https://adventofcode.com/2024)
 | *Day* | *Stars* | *Solution* | *Notes* |
 |-------|---------|------------|---------|
 | Day 1: Historian Hysteria |  ⭐⭐  | [python](day01/) | A relatively strait forward day of splitting an input into ints and comparing lists |
+| Day 2: Red-Nosed Reports |  ⭐⭐  | [python](day02/) | Part 2 was a little trickier to implement reasoned logic, but recursion saves the day |
 
 
 ## Running the code

@@ -1,4 +1,4 @@
-# 2023 Advent of Code solutions
+# 2024 Advent of Code solutions
 
 ![](https://img.shields.io/badge/tests%20passed%20🐍-4/4-success)
 ![](https://img.shields.io/badge/day%20📅-2-blue)

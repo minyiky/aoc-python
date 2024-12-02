@@ -39,13 +39,16 @@ def create_day_files(year: int, day: int):
 
 import os
 
+
 def part_one(input_data: str) -> int:
     """Implement part one logic"""
     pass
 
+
 def part_two(input_data: str) -> int:
     """Implement part two logic"""
     pass
+
 
 if __name__ == "__main__":
     dir_path = os.path.dirname(os.path.realpath(__file__))

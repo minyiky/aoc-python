@@ -1,34 +1,27 @@
 """Solution for Day 1 - Historian Hysteria"""
 
 import os
-
 from collections import Counter
 
-def separate_sides(input_data: str) -> tuple[list[int], list[int]]:
-    lines = input_data.splitlines()
-    left: list[int] = []
-    right: list[int] = []
-    for line in lines:
-        l, r = map(int, line.split())
-        left.append(l)
-        right.append(r)
-    return left, right
+
+def parse_input(input_data: str) -> tuple[list[int], list[int]]:
+    """Parse input into separate left and right lists of integers."""
+    left, right = zip(*(map(int, line.split()) for line in input_data.splitlines()))
+    return list(left), list(right)
+
 
 def part_one(input_data: str) -> int:
     """Implement part one logic"""
-    left, right = separate_sides(input_data)
-        
-    left.sort()
-    right.sort()
-    return sum(abs(r - l) for l, r in zip(left, right))
+    left, right = parse_input(input_data)
+    return sum(abs(r - l) for l, r in zip(sorted(left), sorted(right)))
+
 
 def part_two(input_data: str) -> int:
     """Implement part two logic"""
-    left, right = separate_sides(input_data)
-    
+    left, right = parse_input(input_data)
     right_counter = Counter(right)
-    
     return sum(l * right_counter[l] for l in left)
+
 
 if __name__ == "__main__":
     dir_path = os.path.dirname(os.path.realpath(__file__))

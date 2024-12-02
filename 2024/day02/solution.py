@@ -4,20 +4,18 @@ import os
 
 
 def check_line(vals: list[int], allow_retry: bool = False) -> bool:
-    max_dif, min_dif = 0, 0
+    min_dif, max_dif = (1, 3) if vals[1] > vals[0] else (-3, -1)
     for i in range(len(vals) - 1):
-        curr, prev = vals[i + 1], vals[i]
-        if max_dif == 0 and min_dif == 0:
-            min_dif, max_dif = (1, 3) if curr > prev else (-3, -1)
-
-        diff = curr - prev
+        diff = vals[i + 1] - vals[i]
         if not (min_dif <= diff <= max_dif):
-            if allow_retry:
-                return any(
+            return (
+                any(
                     check_line(vals[:j] + vals[j + 1 :], False)
-                    for j in range(min(i - 1, 0), max(i + 1, len(vals)))
+                    for j in range(i - 1, i + 1)
                 )
-            return False
+                if allow_retry
+                else False
+            )
     return True
 
 
@@ -40,6 +38,7 @@ if __name__ == "__main__":
 
     with open(f"{dir_path}/input.txt", "r") as f:
         input_data = f.read()
-    print("Solution for Day {day} - {title}")
+    print("Solution for Day 2 - Red-Nosed Reports")
     print(part_one(input_data))  # Run part one
     print(part_two(input_data))  # Run part two
+    print()  # Add a new line to separate solutions

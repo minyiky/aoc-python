@@ -25,8 +25,8 @@ generate:
 	@python3 -m aoc_tools.generate.generate_files $(YEAR) $(DAY)
 
 run:
-	@for dir in "$(YEAR)/*/"; do \
-		python $$dir/solution.py; \
+	@for dir in $(YEAR)/*/; do \
+		python "$$dir/solution.py"; \
 	done
 
 run-day:

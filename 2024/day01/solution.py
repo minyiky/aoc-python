@@ -31,3 +31,4 @@ if __name__ == "__main__":
     print("Solution for Day 1 - Historian Hysteria")
     print(part_one(input_data))  # Run part one
     print(part_two(input_data))  # Run part two
+    print()  # Add a new line to separate solutions

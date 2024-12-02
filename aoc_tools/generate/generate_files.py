@@ -55,11 +55,12 @@ if __name__ == "__main__":
 
     with open(f"'''
                 + "{dir_path}"
-                + """/input.txt", "r") as f:
+                + f"""/input.txt", "r") as f:
         input_data = f.read()
     print("Solution for Day {day} - {title}")
     print(part_one(input_data))  # Run part one
     print(part_two(input_data))  # Run part two
+    print()  # Add a new line to separate solutions
 """
             )
         print(f"Created: {solution_file}")

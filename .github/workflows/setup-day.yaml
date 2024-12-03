@@ -2,8 +2,8 @@ name: Daily Setup Commands for Advent of Code
 
 on:
   schedule:
-    # Run daily at 1am UTC for the first 25 days of December
-    - cron: "0 1 1-25 12 *"
+    # Run daily at 6am UTC for the first 25 days of December
+    - cron: "0 6 1-25 12 *"
   workflow_dispatch:
 
 jobs:

@@ -112,14 +112,13 @@ def update_readme(year: int):
     table_end_idx = None
     days_info = []
     for i, line in enumerate(readme_content):
-        if line.startswith("|---"):
+        if line.startswith("| ---"):
             table_start_idx = i
 
         if table_start_idx is not None:
             if not line.startswith("|"):
                 table_end_idx = i
                 break
-            print("adding day info")
             days_info.append(line.strip())
 
     # If the table was found, replace only the rows

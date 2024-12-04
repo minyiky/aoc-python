@@ -3,3 +3,6 @@
 
 # Tool for automating the collection of Advent of Code data
 advent-of-code-data
+
+# Additional packages
+numpy

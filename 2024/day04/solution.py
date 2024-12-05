@@ -3,7 +3,7 @@
 import os
 
 
-def find_xmas(x, y, direction, lines):
+def find_xmas(x: int, y: int, direction: tuple[int, int], lines: list[str]) -> bool:
     """
     Count the occurrences of the word "XMAS" in all possible directions
     from a starting point in a 2D grid of characters.
@@ -19,18 +19,18 @@ def find_xmas(x, y, direction, lines):
         in the specified direction. Returns False if an IndexError occurs.
     """
     word = "XMAS"
-    try:
-        return all(
-            lines[y + direction[1] * i][x + direction[0] * i] == word[i]
-            and y + direction[1] * i >= 0
-            and x + direction[0] * i >= 0
-            for i in range(4)
-        )
-    except IndexError:
+    if not (
+        0 <= y + direction[1] * 3 < len(lines)
+        and (0 <= x + direction[0] * 3 < len(lines[0]))
+    ):
         return False
+    return all(
+        lines[y + direction[1] * i][x + direction[0] * i] == word[i]
+        for i in range(1, 4)
+    )
 
 
-def find_x_mas(x, y, lines):
+def find_x_mas(x: int, y: int, lines: list[str]) -> bool:
     """
     Find the number of occasions where the word "MAS" occurs in an X shape
     in the given lines.
@@ -44,16 +44,20 @@ def find_x_mas(x, y, lines):
         int: The number of diagonals where "MAS" occurs
     """
     word = "MAS"
-    diagonals = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-    return (
-        sum(
-            all(
-                lines[y + direction[1] * i][x + direction[0] * i] == word[i + 1]
-                for i in range(-1, 2)
-            )
-            for direction in diagonals
+
+    diagonals = [(1, 1), (-1, -1), (1, -1), (-1, 1)]
+    return any(
+        all(
+            lines[y + direction[1] * i][x + direction[0] * i] == word[i + 1]
+            for i in [-1, 1]
         )
-        == 2
+        for direction in diagonals[:2]
+    ) and any(
+        all(
+            lines[y + direction[1] * i][x + direction[0] * i] == word[i + 1]
+            for i in [-1, 1]
+        )
+        for direction in diagonals[2:]
     )
 
 
@@ -75,7 +79,7 @@ def part_one(input_data: str) -> int:
     ]
 
     return sum(
-        find_xmas(i, j, direction, lines)
+        lines[j][i] == "X" and find_xmas(i, j, direction, lines)
         for i in range(width)
         for j in range(height)
         for direction in directions
@@ -88,7 +92,7 @@ def part_two(input_data: str) -> int:
     width = len(lines[0])
     height = len(lines)
     return sum(
-        find_x_mas(i, j, lines)
+        lines[j][i] == "A" and find_x_mas(i, j, lines)
         for i in range(1, width - 1)
         for j in range(1, height - 1)
     )

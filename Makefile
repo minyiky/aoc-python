@@ -26,11 +26,11 @@ generate:
 
 run:
 	@for dir in $(YEAR)/*/; do \
-		python "$$dir/solution.py"; \
+		python3 "$$dir/solution.py"; \
 	done
 
 run-day:
-	@python $(WORKING_DIR)/solution.py
+	@python3 $(WORKING_DIR)/solution.py
 
 test:
 	@python3 -m unittest discover $(YEAR) "*test.py"

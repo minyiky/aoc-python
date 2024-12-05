@@ -7,12 +7,13 @@
 
 Here are my results for the [2024 advent of code](https://adventofcode.com/2024) competition
 
-| _Day_                     | _Stars_ | _Solution_       | _Notes_                                                                               |
-| ------------------------- | ------- | ---------------- | ------------------------------------------------------------------------------------- |
-| Day 1: Historian Hysteria |  ⭐⭐  | [python](day01/) | A relatively strait forward day of splitting an input into ints and comparing lists |
-| Day 2: Red-Nosed Reports |  ⭐⭐  | [python](day02/) | Part 2 was a little trickier to implement reasoned logic, but recursion saves the day |
-| Day 3: Mull It Over |  ⭐⭐  | [python](day03/) | A bit of regex today, some care is needed with how the input is formatted though |
-| Day 4: Ceres Search |  ⭐⭐  | [python](day04/) | Python auomatically handling negative list indexes was the biggest debugging issue for this day |
+| _Day_                     | _Stars_ | _Solution_       | _Notes_                                                                                          |
+| ------------------------- | ------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| Day 1: Historian Hysteria | ⭐⭐    | [python](day01/) | A relatively strait forward day of splitting an input into ints and comparing lists              |
+| Day 2: Red-Nosed Reports  | ⭐⭐    | [python](day02/) | Part 2 was a little trickier to implement reasoned logic, but recursion saves the day            |
+| Day 3: Mull It Over       | ⭐⭐    | [python](day03/) | A bit of regex today, some care is needed with how the input is formatted though                 |
+| Day 4: Ceres Search       | ⭐⭐    | [python](day04/) | Python automatically handling negative list indexes was the biggest debugging issue for this day |
+| Day 5: Print Queue        | ⭐⭐    | [python](day05/) | Bubble bubble                                                                                    |
 
 ## Running the code
 

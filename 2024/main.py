@@ -62,9 +62,9 @@ def timer() -> Generator[Callable[[], tuple[Any, Any]]]:
     cpu = psutil.cpu_times_percent()
 
 
-def ns_to_ms(ns: float | int) -> float:
+def ns_to_s(ns: float | int) -> float:
     """Convert nanoseconds to seconds."""
-    return round(ns / 1000000.0, 6)
+    return round(ns / 1000000000.0, 6)
 
 
 def yes_no(value: bool) -> str:
@@ -132,8 +132,8 @@ def run() -> None:
             continue
         t1, cpu = t_1()
         t2, _ = t_2()
-        part_one_seconds = ns_to_ms(t1)
-        part_two_seconds = ns_to_ms(t2)
+        part_one_seconds = ns_to_s(t1)
+        part_two_seconds = ns_to_s(t2)
         day_seconds = part_one_seconds + part_two_seconds
         total_seconds += day_seconds
         source = purify_source(inspect.getsource(module))

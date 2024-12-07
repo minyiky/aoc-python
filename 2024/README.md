@@ -15,6 +15,7 @@ Here are my results for the [2024 advent of code](https://adventofcode.com/2024)
 | Day 4: Ceres Search       | ⭐⭐    | [python](day04/) | Python automatically handling negative list indexes was the biggest debugging issue for this day                         |
 | Day 5: Print Queue        | ⭐⭐    | [python](day05/) | Bubble bubble                                                                                                            |
 | Day 6: Guard Gallivant    | ⭐⭐    | [python](day06/) | A traditional path following puzzle today, brute forcing is quick enough but there are definitely improvements to be had |
+| Day 7: Bridge Repair      | ⭐⭐    | [python](day07/) | Another day where recursion and caching allowed for intelligent traversal of the tree                                    |
 
 ## Running the code
 

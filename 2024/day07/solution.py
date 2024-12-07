@@ -2,6 +2,7 @@
 
 import os
 import math
+from functools import lru_cache
 
 from typing import Callable
 
@@ -11,19 +12,13 @@ part_one_operations: list[Callable[[int, int], int]] = [
     lambda x, y: x * y,  # Multiplication
 ]
 
-num_lengths: dict[int, int] = {}
+
+@lru_cache(maxsize=None)
+def int_len(num: int):
+    return 1 + math.floor(math.log10(num))
 
 
-def store_num_length(num: int) -> int:
-    v = 1 + math.floor(math.log10(num))
-    num_lengths[num] = v
-    return v
-
-
-concatenation: Callable[[int, int], int] = (
-    lambda x, y: x * 10 ** (num_lengths[x] if x in num_lengths else store_num_length(x))
-    + y
-)
+concatenation: Callable[[int, int], int] = lambda x, y: x * 10 ** (int_len(y)) + y
 
 part_two_operations = part_one_operations + [concatenation]
 
@@ -34,7 +29,7 @@ def recursive_check_line(
     target: int,
     ops: list[Callable[[int, int], int]] = part_two_operations,
 ) -> int:
-    if not values:
+    if len(values) == 0:
         return target if current == target else 0
     if current > target:
         return 0
@@ -71,8 +66,6 @@ def part_two(input_data: str) -> int:
         vals = list(map(int, other.split()))
         if sum(vals) > int(target):
             continue
-        for val in vals:
-            store_num_length(val)
         total += recursive_check_line(
             vals[0], vals[1:], int(target), part_two_operations
         )

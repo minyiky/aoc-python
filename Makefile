@@ -3,7 +3,7 @@ DAY := $(shell date '+%d')
 YEAR := $(shell date +%Y)
 
 # Create the directory path with a zero padded day
-WORKING_DIR = $(YEAR)/day$(shell printf "%02d" $(DAY))
+WORKING_DIR = $(YEAR)/day$(DAY)
 
 .PHONY: fetch-input fetch-example fetch
 
@@ -36,7 +36,7 @@ test:
 	@python3 -m unittest discover $(YEAR) "*test.py"
 
 test-day:
-	@python3 -m unittest discover $(YEAR) "day$(shell printf "%02d" $(DAY))_test.py"
+	@python3 -m unittest discover $(YEAR) "day$(DAY)_test.py"
 
 update-readme:
 	@python3 -m aoc_tools.generate.update_readme $(YEAR)

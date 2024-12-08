@@ -1,184 +1,194 @@
 import os
+from collections import defaultdict
+from bisect import insort, bisect_left, bisect_right
 
-directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+# Directions for movement (up, right, down, left)
+DIRECTIONS = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+
+
+def _find_next(d: int, target: int, walls: list[int]) -> int | None:
+    """Find the next position before a wall in the given direction."""
+    if d > 0:  # Moving down
+        idx = bisect_right(walls, target)
+        if idx < len(walls):
+            return walls[idx] - 1
+    else:  # Moving up
+        idx = bisect_left(walls, target)
+        if idx > 0:
+            return walls[idx - 1] + 1
+    return None
+
+
+class WallMap:
+    """Class to manage wall map and handle movements."""
+
+    def __init__(self, walls: set[tuple[int, int]] | None = None):
+        self.x_locs: defaultdict[int, list[int]] = defaultdict(list)
+        self.y_locs: defaultdict[int, list[int]] = defaultdict(list)
+
+        if walls:
+            for x, y in walls:
+                self.x_locs[x].append(y)
+                self.y_locs[y].append(x)
+
+            # Sort the positions of walls
+            for values in self.x_locs.values():
+                values.sort()
+            for values in self.y_locs.values():
+                values.sort()
+
+    def add_wall(self, x: int, y: int):
+        """Add a wall at the given position."""
+        insort(self.x_locs[x], y)
+        insort(self.y_locs[y], x)
+
+    def next_space_before_wall(
+        self, x: int, y: int, direction: tuple[int, int]
+    ) -> tuple[int, int] | None:
+        """Find the next space before a wall in the given direction."""
+        dx, dy = direction
+        if dx == 0:  # Vertical movement
+            walls = self.x_locs[x]
+            new_y = _find_next(dy, y, walls)
+            return (x, new_y) if new_y is not None else None
+        elif dy == 0:  # Horizontal movement
+            walls = self.y_locs[y]
+            new_x = _find_next(dx, x, walls)
+            return (new_x, y) if new_x is not None else None
+        return None
+
+    def copy(self) -> "WallMap":
+        """Create a copy of the current WallMap."""
+        new_map = WallMap()
+        new_map.x_locs = defaultdict(
+            list, {key: value.copy() for key, value in self.x_locs.items()}
+        )
+        new_map.y_locs = defaultdict(
+            list, {key: value.copy() for key, value in self.y_locs.items()}
+        )
+        return new_map
 
 
 def generate_maps(
     lines: list[str],
 ) -> tuple[tuple[int, int], set[tuple[int, int]], set[tuple[int, int]]]:
-    """
-    Generate the initial map configuration from the input lines.
-
-    This function processes a list of strings representing a grid, where each
-    character in the string indicates either an empty space, a wall, or the
-    starting position. It categorizes each position into walls, empty spaces,
-    or the start position.
-
-    Args:
-        lines (list of str): The grid representation where each string is a row.
-
-    Returns:
-        tuple: A tuple containing the starting position as a tuple of integers
-        (x, y), a set of tuples representing wall positions, and a set of tuples
-        representing empty positions.
-    """
-    walls: set[tuple[int, int]] = set({})
-    empties: set[tuple[int, int]] = set({})
+    """Generate the map configuration from input lines."""
+    walls: set[tuple[int, int]] = set()
+    empties: set[tuple[int, int]] = set()
     start = (0, 0)
+
     for j, line in enumerate(lines):
         for i, char in enumerate(line):
             if char == "#":
                 walls.add((i, j))
-                continue
             elif char == "^":
                 start = (i, j)
             empties.add((i, j))
+
     return start, walls, empties
 
 
-def num_visited(
-    start: tuple[int, int],
-    walls: set[tuple[int, int]],
-    empties: set[tuple[int, int]],
+def num_visited_teleport(
+    start: tuple[int, int], wall_map: WallMap, max_x: int, max_y: int
 ) -> int:
-    """
-    Find the number of visited positions.
-
-    Given a starting position, a set of walls, and a set of empty spaces, find the
-    number of positions that can be visited by walking in the given direction.
-
-    Args:
-        start (tuple[int, int]): The starting position.
-        walls (set[tuple[int, int]]): The set of walls.
-        empties (set[tuple[int, int]]): The set of empty spaces.
-
-    Returns:
-        int: The number of visited positions.
-    """
-    visited_set: set[tuple[int, int]] = {(start)}
-    turns = 0
-    direction = directions[turns % 4]
+    """Find the number of distinct visited positions."""
+    visited: set[tuple[int, int]] = {start}
     pos = start
+    direction = DIRECTIONS[0]
+    turns = 0
 
     while True:
-        next_pos = (pos[0] + direction[0], pos[1] + direction[1])
+        next_pos = wall_map.next_space_before_wall(pos[0], pos[1], direction)
 
-        if next_pos in walls:
-            turns += 1
-            direction = directions[turns % 4]
-            continue
-
-        if next_pos not in empties:
+        if not next_pos:
+            while 0 <= pos[0] < max_x and 0 <= pos[1] < max_y:
+                visited.add(pos)
+                pos = (pos[0] + direction[0], pos[1] + direction[1])
             break
 
-        pos = next_pos
-        visited_set.add(pos)
-    return len(visited_set)
+        while pos != next_pos:
+            visited.add(pos)
+            pos = (pos[0] + direction[0], pos[1] + direction[1])
+
+        turns += 1
+        direction = DIRECTIONS[turns % 4]
+
+    return len(visited)
 
 
-def has_loop(
-    start: tuple[int, int],
-    turns: int,
-    walls: set[tuple[int, int]],
-    empties: set[tuple[int, int]],
-) -> bool:
-    """
-    Check if a loop is formed.
-
-    Given a starting position, a turn count, a set of walls, and a set of
-    empty spaces, check if a loop is formed by walking in the given
-    direction.
-
-    Args:
-        start (tuple[int, int]): The starting position.
-        turns (int): The turn count.
-        walls (set[tuple[int, int]]): The set of walls.
-        empties (set[tuple[int, int]]): The set of empty spaces.
-
-    Returns:
-        bool: Whether a loop is formed.
-    """
-    visited_walls: set[tuple[tuple[int, int], tuple[int, int]]] = set({})
-    direction = directions[turns % 4]
+def has_loop_teleport(start: tuple[int, int], turns: int, wall_map: WallMap) -> bool:
+    """Check if there is a loop during the teleportation."""
+    visited_walls: set[tuple[tuple[int, int], tuple[int, int]]] = set()
     pos = start
+    direction = DIRECTIONS[turns % 4]
 
     while True:
-        next_pos = (pos[0] + direction[0], pos[1] + direction[1])
+        next_pos = wall_map.next_space_before_wall(pos[0], pos[1], direction)
 
-        if next_pos in walls:
-            if (next_pos, direction) in visited_walls:
-                return True
-            visited_walls.add((next_pos, direction))
-            turns += 1
-            direction = directions[turns % 4]
-            continue
+        if not next_pos:
+            return False
 
-        if next_pos not in empties:
-            break
+        state = (next_pos, direction)
+        if state in visited_walls:
+            return True
 
+        visited_walls.add(state)
         pos = next_pos
+        turns += 1
+        direction = DIRECTIONS[turns % 4]
 
-    return False
 
-
-def num_loops(
+def num_loops_teleport(
     start: tuple[int, int],
     walls: set[tuple[int, int]],
     empties: set[tuple[int, int]],
+    wall_map: WallMap,
 ) -> int:
-    """
-    Find the number of loops that can be formed by walking in the given direction
-    from the starting position if obstacles were to be placed in the way.
-
-    Args:
-        start (tuple[int, int]): The starting position.
-        walls (set[tuple[int, int]]): The set of walls.
-        empties (set[tuple[int, int]]): The set of empty spaces.
-
-    Returns:
-        int: The number of loops that can be formed.
-    """
-    visited: set[tuple[int, int]] = {(start)}
-
-    turns = 0
-    direction = directions[turns % 4]
+    """Count the number of loops in the teleportation."""
+    visited: set[tuple[int, int]] = {start}
     pos = start
-
+    turns = 0
     count = 0
+    direction = DIRECTIONS[turns % 4]
 
     while True:
         next_pos = (pos[0] + direction[0], pos[1] + direction[1])
 
         if next_pos in walls:
             turns += 1
-            direction = directions[turns % 4]
+            direction = DIRECTIONS[turns % 4]
             continue
 
         if next_pos not in empties:
             break
 
         if next_pos not in visited:
-            new_walls = walls.copy()
-            new_walls.add(next_pos)
-            if has_loop(pos, turns, new_walls, empties):
+            new_wall_map = wall_map.copy()
+            new_wall_map.add_wall(next_pos[0], next_pos[1])
+
+            if has_loop_teleport(pos, turns, new_wall_map):
                 count += 1
+
         pos = next_pos
         visited.add(pos)
+
     return count
 
 
 def part_one(input_data: str) -> int:
     """Solve part one."""
     lines = input_data.splitlines()
-    start, walls, empties = generate_maps(lines)
-    return num_visited(start, walls, empties)
+    start, walls, _ = generate_maps(lines)
+    wall_map = WallMap(walls)
+    return num_visited_teleport(start, wall_map, len(lines[0]), len(lines))
 
 
 def part_two(input_data: str) -> int:
     """Solve part two."""
     lines = input_data.splitlines()
     start, walls, empties = generate_maps(lines)
-    return num_loops(start, walls, empties)
+    wall_map = WallMap(walls)
+    return num_loops_teleport(start, walls, empties, wall_map)
 
 
 if __name__ == "__main__":

@@ -145,7 +145,7 @@ def run() -> None:
             str(maybe_redact(p2, args.redact)),
             format_cpu(cpu),
             f"{sloc} ({chars})",
-            f"{day_seconds:.2f} ({part_one_seconds:.2f}, {part_two_seconds:.2f})".ljust(
+            f"{day_seconds:.2f} ({part_one_seconds:.4f}, {part_two_seconds:.4f})".ljust(
                 8, "0"
             ),
             yes_no(day_seconds < 1),

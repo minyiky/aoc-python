@@ -1,6 +1,6 @@
 # 2024 Advent of Code solutions
 
-![](https://img.shields.io/badge/tests%20passed%20🐍-18/18-success)
+![](https://img.shields.io/badge/tests%20passed%20🐍-20/20-success)
 ![](https://img.shields.io/badge/stars%20⭐-18-yellow)
 ![](https://img.shields.io/badge/days%20completed-9-red)
 

@@ -18,6 +18,7 @@ Here are my results for the [2024 advent of code](https://adventofcode.com/2024)
 | Day 8: Resonant Collinearity | ⭐⭐    | [python](day08/) | Take a close look at the input, it makes this day much simpler                                                           |
 | Day 9: Disk Fragmenter       | ⭐⭐    | [python](day09/) | The inputs held a tricky situation today and remember,. numbers can have more than one digit                             |
 | Day 10: Hoof It              | ⭐⭐    | [python](day10/) | Turns out reading the question is useful, but I was not alone, BFS was the route in this one                             |
+| Day 11: Plutonian Pebbles    | ⭐⭐    | [python](day11/) | All about recursion,lists are definitely not the way                                                                     |
 
 ## Running the code
 

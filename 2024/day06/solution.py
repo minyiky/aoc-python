@@ -22,20 +22,40 @@ def _find_next(d: int, target: int, walls: list[int]) -> int | None:
 class WallMap:
     """Class to manage wall map and handle movements."""
 
-    def __init__(self, walls: set[tuple[int, int]] | None = None):
+    def __init__(self, lines: list[str]):
         self.x_locs: defaultdict[int, list[int]] = defaultdict(list)
         self.y_locs: defaultdict[int, list[int]] = defaultdict(list)
 
-        if walls:
-            for x, y in walls:
-                self.x_locs[x].append(y)
-                self.y_locs[y].append(x)
+        self.max_x = len(lines[0])
+        self.max_y = len(lines)
 
-            # Sort the positions of walls
-            for values in self.x_locs.values():
-                values.sort()
-            for values in self.y_locs.values():
-                values.sort()
+        for y, line in enumerate(lines):
+            for x, char in enumerate(line):
+                if char == "#":
+                    self.x_locs[x].append(y)
+                    self.y_locs[y].append(x)
+
+        # Sort the positions of walls
+        for values in self.x_locs.values():
+            values.sort()
+        for values in self.y_locs.values():
+            values.sort()
+
+        jumps: dict[tuple[int, int], dict[tuple[int, int], tuple[int, int]]] = (
+            defaultdict(dict[tuple[int, int], tuple[int, int]])
+        )
+
+        for j in range(self.max_y):
+            for i in range(self.max_x):
+                for dx, dy in DIRECTIONS:
+                    next_x = _find_next(dx, i, self.y_locs[j]) if dx != 0 else i
+                    next_y = _find_next(dy, j, self.x_locs[i]) if dy != 0 else j
+
+                    if next_x is None or next_y is None:
+                        continue
+                    jumps[(i, j)][(dx, dy)] = (next_x, next_y)
+
+        self.jumps = jumps
 
     def add_wall(self, x: int, y: int):
         """Add a wall at the given position."""
@@ -59,7 +79,7 @@ class WallMap:
 
     def copy(self) -> "WallMap":
         """Create a copy of the current WallMap."""
-        new_map = WallMap()
+        new_map = WallMap([""])
         new_map.x_locs = defaultdict(
             list, {key: value.copy() for key, value in self.x_locs.items()}
         )
@@ -178,8 +198,8 @@ def num_loops_teleport(
 def part_one(input_data: str) -> int:
     """Solve part one."""
     lines = input_data.splitlines()
-    start, walls, _ = generate_maps(lines)
-    wall_map = WallMap(walls)
+    start, _, _ = generate_maps(lines)
+    wall_map = WallMap(lines)
     return num_visited_teleport(start, wall_map, len(lines[0]), len(lines))
 
 
@@ -187,7 +207,7 @@ def part_two(input_data: str) -> int:
     """Solve part two."""
     lines = input_data.splitlines()
     start, walls, empties = generate_maps(lines)
-    wall_map = WallMap(walls)
+    wall_map = WallMap(lines)
     return num_loops_teleport(start, walls, empties, wall_map)
 
 

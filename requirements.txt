@@ -8,3 +8,4 @@ advent-of-code-data
 rich
 rich_argparse
 psutil
+pillow

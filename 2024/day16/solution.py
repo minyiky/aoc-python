@@ -5,6 +5,9 @@ from __future__ import annotations
 import os
 import heapq
 
+from collections import defaultdict
+from functools import cache
+
 
 class Point:
     def __init__(self, x: int, y: int):
@@ -19,6 +22,12 @@ class Point:
 
     def __repr__(self) -> str:
         return f"Point({self.x}, {self.y})"
+
+    def __lt__(self, other: Point) -> bool:
+        return self.x < other.x or (self.x == other.x and self.y < other.y)
+
+    def __gt__(self, other: Point) -> bool:
+        return self.x > other.x or (self.x == other.x and self.y > other.y)
 
     def add(self, p: Point) -> Point:
         return Point(self.x + p.x, self.y + p.y)
@@ -55,8 +64,22 @@ def print_map(lines: list[str], current: Point, direction: Point) -> None:
         print(s)
 
 
-def part_one(input_data: str) -> int:
-    """Implement part one logic"""
+@cache
+def solve(input_data: str) -> tuple[int, int]:
+    """
+    Solve the Reindeer Maze problem.
+
+    Parameters
+    ----------
+    input_data : str
+        The input data as a string.
+
+    Returns
+    -------
+    tuple[int, int]
+        A tuple of two integers. The first integer is the minimum cost to reach the end.
+        The second integer is the number of cells which are part of any shortest route.
+    """
     lines = input_data.splitlines()
 
     walls: set[Point] = set()
@@ -78,135 +101,51 @@ def part_one(input_data: str) -> int:
 
     closed_cells: set[tuple[Point, Point]] = set()
 
-    open_cells: dict[tuple[Point, Point], int] = {}
+    open_cells: list[tuple[int, Point, Point]] = []
+    route_map: dict[tuple[int, Point, Point], list[Point]] = defaultdict(list[Point])
 
     if start.add(direction) not in walls:
-        open_cells[start.add(direction), direction] = 1
-    if start.add(left) not in walls:
-        open_cells[start.add(left), left] = 1001
-    if start.add(right) not in walls:
-        open_cells[start.add(right), right] = 1001
+        c = (1, start.add(direction), direction)
+        heapq.heappush(open_cells, c)
+        route_map[c] += [start]
+
+    for d in [left, right]:
+        if start.add(d) not in walls:
+            c = (1001, start.add(d), d)
+            heapq.heappush(open_cells, c)
+            route_map[c] += [start]
 
     cost = 0
+    all_routes = []
     while True:
-        next_cell, direction = min(open_cells, key=lambda cell: open_cells[cell])
-        cost = open_cells[(next_cell, direction)]
-
-        # print(f"looking at {next_cell} with cost {cost}")
-        # print_map(lines, next_cell, direction)
-
-        if next_cell == end:
-            break
-
-        closed_cells.add((next_cell, direction))
-        del open_cells[(next_cell, direction)]
-
-        left, right = lr[direction]
-
-        if next_cell.add(direction) not in walls:
-            open_cells[(next_cell.add(direction), direction)] = cost + 1
-
-        new_cost = cost + 1001
-        for d in [left, right]:
-            side_cell = next_cell.add(d)
-            if (
-                side_cell not in walls
-                and (side_cell, d) not in closed_cells
-                and (
-                    (side_cell, d) not in open_cells
-                    or open_cells[side_cell, d] > new_cost
-                )
-            ):
-                open_cells[(side_cell, d)] = new_cost
-
-    return cost
-
-
-def part_two(input_data: str) -> int:
-    """Implement part two logic"""
-    lines = input_data.splitlines()
-
-    walls: set[Point] = set()
-    start: Point = Point(0, 0)
-    end: Point = Point(0, 0)
-
-    for j, line in enumerate(lines):
-        for i, char in enumerate(line):
-            if char == "#":
-                walls.add(Point(i, j))
-            elif char == "S":
-                start = Point(i, j)
-            elif char == "E":
-                end = Point(i, j)
-
-    direction = Point(1, 0)
-
-    left, right = lr[direction]
-
-    closed_cells: set[tuple[Point, Point]] = set()
-
-    open_cells: dict[tuple[Point, Point], tuple[int, set[Point]]] = {}
-
-    if start.add(direction) not in walls:
-        open_cells[start.add(direction), direction] = (1, {start})
-    if start.add(left) not in walls:
-        open_cells[start.add(left), left] = (1001, {start})
-    if start.add(right) not in walls:
-        open_cells[start.add(right), right] = (1001, {start})
-
-    cost = 0
-    all_routes = set()
-    while True:
-        next_cell, direction = min(open_cells, key=lambda cell: open_cells[cell][0])
-        cost, route = open_cells[(next_cell, direction)]
-
-        # print(f"looking at {next_cell} with cost {cost}")
-        # print_map(lines, next_cell, direction)
+        cost, next_cell, direction = heapq.heappop(open_cells)
+        route = route_map[(cost, next_cell, direction)]
 
         if next_cell == end:
             all_routes = route
             break
 
+        if (next_cell, direction) in closed_cells:
+            continue
+
         closed_cells.add((next_cell, direction))
-        del open_cells[(next_cell, direction)]
-
         left, right = lr[direction]
-
-        new_route = {next_cell}.union(route)
+        new_route = route + [next_cell]
 
         forward_cell = next_cell.add(direction)
         if forward_cell not in walls:
-            if (forward_cell, direction) not in open_cells:
-                open_cells[(forward_cell, direction)] = (
-                    cost + 1,
-                    new_route,
-                )
-            elif open_cells[forward_cell, direction][0] == cost + 1:
-                open_cells[forward_cell, direction] = (
-                    cost + 1,
-                    open_cells[forward_cell, direction][1].union(new_route),
-                )
-            elif open_cells[forward_cell, direction][0] > cost + 1:
-                open_cells[forward_cell, direction] = (
-                    cost + 1,
-                    new_route,
-                )
-            # continue
+            c = (cost + 1, forward_cell, direction)
+            heapq.heappush(open_cells, c)
+            route_map[c] += new_route
 
-        new_cost = cost + 1001
         for d in [left, right]:
             side_cell = next_cell.add(d)
             if side_cell not in walls and (side_cell, d) not in closed_cells:
-                if (side_cell, d) not in open_cells:
-                    open_cells[(side_cell, d)] = (new_cost, new_route)
-                else:
-                    if open_cells[side_cell, d][0] > new_cost:
-                        open_cells[side_cell, d] = (new_cost, new_route)
-                    elif open_cells[side_cell, d][0] == new_cost:
-                        open_cells[side_cell, d] = (
-                            new_cost,
-                            open_cells[side_cell, d][1].union(new_route),
-                        )
+                c = (cost + 1001, side_cell, d)
+                heapq.heappush(open_cells, c)
+                route_map[c] += new_route
+
+    all_routes = set(all_routes)
 
     # for j, line in enumerate(lines):
     #     s = ""
@@ -224,7 +163,19 @@ def part_two(input_data: str) -> int:
     #                 s += " "
     #     print(s)
 
-    return len(all_routes) + 1
+    return cost, len(set(all_routes)) + 1
+
+
+def part_one(input_data: str) -> int:
+    """Implement part one logic"""
+    cost, _ = solve(input_data)
+    return cost
+
+
+def part_two(input_data: str) -> int:
+    """Implement part two logic"""
+    _, all_routes = solve(input_data)
+    return all_routes
 
 
 if __name__ == "__main__":

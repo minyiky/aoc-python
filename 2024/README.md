@@ -1,8 +1,8 @@
 # 2024 Advent of Code solutions
 
 ![](https://img.shields.io/badge/tests%20passed%20🐍-40/40-success)
-![](https://img.shields.io/badge/stars%20⭐-36-yellow)
-![](https://img.shields.io/badge/days%20completed-18-red)
+![](https://img.shields.io/badge/stars%20⭐-40-yellow)
+![](https://img.shields.io/badge/days%20completed-20-red)
 
 Here are my results for the [2024 advent of code](https://adventofcode.com/2024) competition
 

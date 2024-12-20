@@ -2,15 +2,44 @@
 
 import os
 
+from functools import cache
+
+
+def check_towels(stripes: list[str], towel: str) -> bool:
+    if towel == "":
+        return True
+    return any(
+        (
+            check_towels(stripes, towel[len(stripe) :])
+            if towel.startswith(stripe)
+            else False
+        )
+        for stripe in stripes
+    )
+
 
 def part_one(input_data: str) -> int:
     """Implement part one logic"""
-    pass
+    lines = input_data.splitlines()
+    stripes = lines[0].split(", ")
+    return sum(check_towels(stripes, towel) for towel in lines[2:])
+
+
+@cache
+def count_towels(stripes: tuple[str], towel: str) -> int:
+    if not towel:
+        return 1
+    return sum(
+        (count_towels(stripes, towel[len(stripe) :]) if towel.startswith(stripe) else 0)
+        for stripe in stripes
+    )
 
 
 def part_two(input_data: str) -> int:
     """Implement part two logic"""
-    pass
+    lines = input_data.splitlines()
+    stripes = tuple(lines[0].split(", "))
+    return sum(count_towels(stripes, towel) for towel in lines[2:])
 
 
 if __name__ == "__main__":
